@@ -47,6 +47,15 @@ def selenium_driver():
     driver = webdriver.Chrome(service=service, options=options)
     return driver
 
+def measure_time(start_time, s, threshold=10.1):
+    counting = True
+    while counting and not s.citation_loaded:
+        current = time.perf_counter() - start_time
+        if current >= threshold:
+            counting = False
+            s.flag = True
+        time.sleep(0.1)
+
 #Create the chrome driver that can be referred to globally
 driver = None
 
@@ -60,7 +69,7 @@ class Scraper():
         self.start_time = time.perf_counter()
         
         #Some properties that will help us see if the citation has been found
-        self._citation_found = False
+        self._citation_loaded = False
         self._flag = False
         
         #Define parameters of loop
@@ -89,8 +98,8 @@ class Scraper():
         return self._url
     
     @property
-    def citation_found(self):
-        return self._citation_found
+    def citation_loaded(self):
+        return self._citation_loaded
     
     @property
     def flag(self):
@@ -143,7 +152,7 @@ class Scraper():
     def get_data(self):
         citation_data = driver.find_elements(By.CSS_SELECTOR, ".v-card__text .col")
         no_data_text = driver.find_elements(By.CSS_SELECTOR, ".v-card__text .text-center h4")
-        while len(citation_data) < 1 and len(no_data_text) < 1:
+        while not self.flag and len(citation_data) < 1 and len(no_data_text) < 1:
             citation_data = driver.find_elements(By.CSS_SELECTOR, ".v-card__text .col")
             no_data_text = driver.find_elements(By.CSS_SELECTOR, ".v-card__text .text-center h4")
             time.sleep(0.1)
@@ -166,7 +175,17 @@ class Scraper():
         self.go()
         self.find_citation()
         for i in self.officers:
-            for j in self.index:
+            j = 0
+            while j < len(self.index):
+                self._citation_loaded = False
+
+                #Time how long it takes to scrape each citation
+                start_time = time.perf_counter()
+
+                # Create and start the thread for measuring time
+                time_thread = threading.Thread(target=measure_time, args=(start_time,self))
+                time_thread.start()
+
                 self.send_keys({"officer": i, "index": j})
                 
                 #Store the data in the RAM
@@ -177,12 +196,27 @@ class Scraper():
                     save_data(scraped_data, save = j == len(self.index)-1)
                 else:
                     print("No data")
+                self._citation_loaded = True
+
+                #Join the current thread
+                time_thread.join()
+                print(f"Execution time: {time.perf_counter()-start_time:.6f}\n")
 
                 print("Most recent data scraped:")
                 print(DATA.tail(5))
 
                 if j % 10 == 0:
                     self.calculateTime()
+
+                #Reset the flag:
+                if self._flag:
+                    #This property can only be set true by the measure_time thread
+                    j -= 1
+                    self._flag = False
+
+                #Generally increase the jth index after each iteration
+                j += 1
+
         print("Finished scraping all the data.")
         self.calculateTime()
 

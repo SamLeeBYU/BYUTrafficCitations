@@ -20,15 +20,15 @@ def save_data(data, save=False):
     if DATA.empty:
         DATA = data
     else:
-        DATA = pd.concat([DATA, data])
+        DATA = pd.concat([DATA, data]).reset_index(drop=True)
     
     if save:
         #Clean the data before saving it to the file
         DATA["Officer"] = DATA["Citation"].apply(lambda x: re.search(r'P(\d)', x).group(1))
         DATA["Fine"] = DATA["Fine"].apply(lambda x: float(x.replace('$', '').replace(',', '')))
         DATA["Residence"] = DATA["License Plate/Vin"].str.split().str[0]
-        DATA["IssuedDate"]=pd.to_datetime(data["Issued"].apply(lambda x: " ".join(x.split()[:3]))) 
-        DATA["IssuedTime"]=pd.to_datetime(data["Issued"]).dt.strftime('%I:%M %p')
+        DATA["IssuedDate"]=pd.to_datetime(DATA["Issued"]).dt.strftime('%Y-%m-%d')
+        DATA["IssuedTime"]=pd.to_datetime(DATA["Issued"]).dt.strftime('%I:%M %p')
         
         if os.path.exists("ParkingCitations.csv"):
             DATA.to_csv("ParkingCitations.csv", mode='a', index=False, header=False)
@@ -37,11 +37,11 @@ def save_data(data, save=False):
             
     return(DATA)
 
-PATH = "Driver\chromedriver.exe"
+PATH = "Driver/chromedriver.exe"
 
 def selenium_driver():
     
-    service = Service(PATH)
+    service = Service(PATH) #Service(ChromeDriverManager().install())
 
     options = Options()
     driver = webdriver.Chrome(service=service, options=options)
@@ -161,16 +161,44 @@ class Scraper():
             return pd.DataFrame()
         else:
             #Now we need to parse the data into a pandas data frame
-            return self.format_text([el.text for el in citation_data])
+            
+            #Additional information about the citation if it exists and whether or not they paid the ticket
+            additionalInfo = self.checkPayment()
+            
+            return pd.concat([self.format_text([el.text for el in citation_data]), additionalInfo], axis=1)
     
     @staticmethod
     def format_text(text_arr):
         #Takes the text data and returns a formatted pandas frame
-        cols = list(map(lambda x: x.split(":\n")[0], text_arr))
-        data = list(map(lambda x: x.split(":\n")[1], text_arr))
+        cols = [x.split(":")[0] for x in text_arr]
+        data = [x.split(":", 1)[1].strip() if ":" in x else x.strip() for x in text_arr]
+        
         row = pd.DataFrame(data, cols).transpose()
         return row
+
+    @staticmethod
+    def checkPayment():
+        #Check to see if the payment is available
+        #We can assume that the buttons to appeal and pay have loaded when the citation has loaded so we don't need to load again
+        buttons = driver.find_elements(By.CSS_SELECTOR, ".v-card__text .text-center button")
         
+        citationInfo = {"CitationText": None,
+                        "Unpaid": False}
+        if len(buttons) > 0:
+            if len(buttons) > 1:
+                citationInfo = {"CitationText": buttons[0].text,
+                                "Unpaid": True}
+            elif len(buttons) == 0:
+                #We have to determine what kind of information is left to be scraped
+                if "APPEAL" in buttons[0].text.upper():
+                    citationInfo = {"CitationText": buttons[0].text,
+                                    "Unpaid": False}
+                elif "PAY" in buttons[0].text.upper():
+                    citationInfo = {"CitationText": None,
+                                    "Unpaid": True}
+        #Two columns to be merged with the row that scrapes the general information
+        return pd.DataFrame.from_dict(citationInfo, orient='index').T
+
     def main_loop(self):
         self.go()
         self.find_citation()

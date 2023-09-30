@@ -55,6 +55,9 @@ class Scraper():
     def __init__(self, url):
         #Define the url to scrape
         self._url = url
+
+        #Starting time
+        self.start_time = time.perf_counter()
         
         #Some properties that will help us see if the citation has been found
         self._citation_found = False
@@ -66,6 +69,20 @@ class Scraper():
 
     def go(self):
         driver.get(self._url)
+
+    def calculateTime(self):
+        self.end_time = time.perf_counter()
+        total_seconds = self.end_time - self.start_time
+
+        hours = total_seconds // 3600
+        remaining_seconds = total_seconds % 3600
+        minutes = remaining_seconds // 60
+        seconds = remaining_seconds % 60
+
+        print(f"\nTotal seconds elapsed: {total_seconds:.4f}")
+        print(f"That's {hours} hours, {minutes} minutes, and {seconds:.4f} seconds.\n")
+
+        return total_seconds
         
     @property
     def url(self):
@@ -95,7 +112,7 @@ class Scraper():
     def send_keys(data={"officer": 1, "index": 0}):
         index = "0"*(5-len(str(data["index"])))+str(data["index"])
         key = f"P{data['officer']}-{index}"
-        print(key)
+        #print(key)
         
         #Search the key into the search bar
         
@@ -132,7 +149,7 @@ class Scraper():
             time.sleep(0.1)
         
         if len(no_data_text) >= 1:
-            return "No data"
+            return pd.DataFrame()
         else:
             #Now we need to parse the data into a pandas data frame
             return self.format_text([el.text for el in citation_data])
@@ -148,15 +165,26 @@ class Scraper():
     def main_loop(self):
         self.go()
         self.find_citation()
-        for i in range(1,2): #self.officers:
-            for j in range(0, 10+1): #self.index:
+        for i in self.officers:
+            for j in self.index:
                 self.send_keys({"officer": i, "index": j})
                 
                 #Store the data in the RAM
                 #Save it to a file when it is the last index
                 #i.e. save it to a file when we are done scraping each officer's citations
                 scraped_data = self.get_data()
-                save_data(scraped_data, save = j == 10) #len(self.index)-1))
+                if not scraped_data.empty:
+                    save_data(scraped_data, save = j == len(self.index)-1)
+                else:
+                    print("No data")
+
+                print("Most recent data scraped:")
+                print(DATA.tail(5))
+
+                if j % 10 == 0:
+                    self.calculateTime()
+        print("Finished scraping all the data.")
+        self.calculateTime()
 
 if __name__ == "__main__":
     driver = selenium_driver()

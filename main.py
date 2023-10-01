@@ -235,7 +235,7 @@ class Scraper():
                     self._citation_loaded = True
                 except Exception as e:
                     now = datetime.datetime.now()
-                    index = "0"*(5-len(str(i)))+str(j)
+                    index = "0"*(5-len(str(j)))+str(j)
                     key = f"P{i}-{index}"
                     error_message = f"{now}: {str(e)};\nThere was an error sending the keys or scraping the data: {key}"
                     with open("errors.txt", "a") as f:

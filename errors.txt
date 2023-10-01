@@ -1,0 +1,98 @@
+2023-10-01 00:45:14.838294: Message: element click intercepted: Element <button type="button" aria-label="append icon" class="v-icon notranslate v-icon--link material-icons theme--light primary--text">...</button> is not clickable at point (285, 301). Other element would receive the click: <li data-v-ef20a174="">...</li>
+  (Session info: chrome=117.0.5938.132)
+Stacktrace:
+	GetHandleVerifier [0x0040CEB3+45171]
+	(No symbol) [0x00399101]
+	(No symbol) [0x0028BE1D]
+	(No symbol) [0x002C3B91]
+	(No symbol) [0x002C268F]
+	(No symbol) [0x002C0C7B]
+	(No symbol) [0x002C0015]
+	(No symbol) [0x002B856A]
+	(No symbol) [0x002DB04C]
+	(No symbol) [0x002B7FA6]
+	(No symbol) [0x002DB2C4]
+	(No symbol) [0x002EDCFA]
+	(No symbol) [0x002DAE46]
+	(No symbol) [0x002B675E]
+	(No symbol) [0x002B78FD]
+	GetHandleVerifier [0x006C54B9+2897529]
+	GetHandleVerifier [0x0070DC6B+3194411]
+	GetHandleVerifier [0x00707A41+3169281]
+	GetHandleVerifier [0x00496130+606960]
+	(No symbol) [0x003A2E7C]
+	(No symbol) [0x0039F008]
+	(No symbol) [0x0039F12F]
+	(No symbol) [0x00391827]
+	BaseThreadInitThunk [0x755F00C9+25]
+	RtlGetAppContainerNamedObjectPath [0x77037B4E+286]
+	RtlGetAppContainerNamedObjectPath [0x77037B1E+238]
+;
+There was an error sending the keys or scraping the data: P1-0000267
+
+2023-10-01 08:03:35.578390: Message: timeout: Timed out receiving message from renderer: 300.000
+  (Session info: chrome=117.0.5938.132)
+Stacktrace:
+	GetHandleVerifier [0x0040CEB3+45171]
+	(No symbol) [0x00399101]
+	(No symbol) [0x0028BE1D]
+	(No symbol) [0x0027E1F8]
+	(No symbol) [0x0027E05A]
+	(No symbol) [0x0027CDD2]
+	(No symbol) [0x0027D5DA]
+	(No symbol) [0x00286EA5]
+	(No symbol) [0x00293C4A]
+	(No symbol) [0x00296C56]
+	(No symbol) [0x0027DAFC]
+	(No symbol) [0x00293B60]
+	(No symbol) [0x002EDE13]
+	(No symbol) [0x002DAE46]
+	(No symbol) [0x002B675E]
+	(No symbol) [0x002B78FD]
+	GetHandleVerifier [0x006C54B9+2897529]
+	GetHandleVerifier [0x0070DC6B+3194411]
+	GetHandleVerifier [0x00707A41+3169281]
+	GetHandleVerifier [0x00496130+606960]
+	(No symbol) [0x003A2E7C]
+	(No symbol) [0x0039F008]
+	(No symbol) [0x0039F12F]
+	(No symbol) [0x00391827]
+	BaseThreadInitThunk [0x755F00C9+25]
+	RtlGetAppContainerNamedObjectPath [0x77037B4E+286]
+	RtlGetAppContainerNamedObjectPath [0x77037B1E+238]
+;
+There was an error sending the keys or scraping the data: P1-000012118
+
+2023-10-01 12:02:46.646043: Message: timeout: Timed out receiving message from renderer: 300.000
+  (Session info: chrome=117.0.5938.132)
+Stacktrace:
+	GetHandleVerifier [0x0040CEB3+45171]
+	(No symbol) [0x00399101]
+	(No symbol) [0x0028BE1D]
+	(No symbol) [0x0027E1F8]
+	(No symbol) [0x0027E05A]
+	(No symbol) [0x0027CDD2]
+	(No symbol) [0x0027D5DA]
+	(No symbol) [0x00286EA5]
+	(No symbol) [0x00293C4A]
+	(No symbol) [0x00296C56]
+	(No symbol) [0x0027DAFC]
+	(No symbol) [0x00293B60]
+	(No symbol) [0x002EDE13]
+	(No symbol) [0x002DAE46]
+	(No symbol) [0x002B675E]
+	(No symbol) [0x002B78FD]
+	GetHandleVerifier [0x006C54B9+2897529]
+	GetHandleVerifier [0x0070DC6B+3194411]
+	GetHandleVerifier [0x00707A41+3169281]
+	GetHandleVerifier [0x00496130+606960]
+	(No symbol) [0x003A2E7C]
+	(No symbol) [0x0039F008]
+	(No symbol) [0x0039F12F]
+	(No symbol) [0x00391827]
+	BaseThreadInitThunk [0x755F00C9+25]
+	RtlGetAppContainerNamedObjectPath [0x77037B4E+286]
+	RtlGetAppContainerNamedObjectPath [0x77037B1E+238]
+;
+There was an error sending the keys or scraping the data: P1-000017636
+

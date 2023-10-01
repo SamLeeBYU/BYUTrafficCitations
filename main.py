@@ -3,6 +3,7 @@ import threading
 import time
 import re
 import os
+import datetime
 
 #import selenium libraries
 from selenium import webdriver
@@ -25,17 +26,17 @@ def save_data(data, save=False):
     if save:
         #Clean the data before saving it to the file
         DATA["Officer"] = DATA["Citation"].apply(lambda x: re.search(r'P(\d)', x).group(1))
-        DATA["Fine"] = DATA["Fine"].apply(lambda x: float(x.replace('$', '').replace(',', '')))
+        DATA["Fine"] = DATA["Fine"].apply(lambda x: float(x.replace('$', '').replace(',', '')) if isinstance(x, str) else x)
         DATA["Residence"] = DATA["License Plate/Vin"].str.split().str[0]
-        DATA["IssuedDate"]=pd.to_datetime(DATA["Issued"]).dt.strftime('%Y-%m-%d')
-        DATA["IssuedTime"]=pd.to_datetime(DATA["Issued"]).dt.strftime('%I:%M %p')
+        DATA["IssuedDate"] = pd.to_datetime(DATA["Issued"], format='%b %d, %Y %I:%M %p').dt.strftime('%Y-%m-%d')
+        DATA["IssuedTime"] = pd.to_datetime(DATA["Issued"], format='%b %d, %Y %I:%M %p').dt.strftime('%I:%M %p')
         
         if os.path.exists("ParkingCitations.csv"):
             DATA.to_csv("ParkingCitations.csv", mode='a', index=False, header=False)
         else:
             DATA.to_csv("ParkingCitations.csv", index=False)
-            
-    return(DATA)
+
+        DATA = pd.DataFrame()
 
 PATH = "Driver/chromedriver.exe"
 
@@ -207,6 +208,12 @@ class Scraper():
             while j < len(self.index):
                 self._citation_loaded = False
 
+                #Reset the flag:
+                if self._flag == True:
+                    self._flag = False
+                    self.go()
+                    self.find_citation()
+
                 #Time how long it takes to scrape each citation
                 start_time = time.perf_counter()
 
@@ -214,17 +221,26 @@ class Scraper():
                 time_thread = threading.Thread(target=measure_time, args=(start_time,self))
                 time_thread.start()
 
-                self.send_keys({"officer": i, "index": j})
-                
-                #Store the data in the RAM
-                #Save it to a file when it is the last index
-                #i.e. save it to a file when we are done scraping each officer's citations
-                scraped_data = self.get_data()
-                if not scraped_data.empty:
-                    save_data(scraped_data, save = j == len(self.index)-1)
-                else:
-                    print("No data")
-                self._citation_loaded = True
+                try:
+                    self.send_keys({"officer": i, "index": j})
+                    
+                    #Store the data in the RAM
+                    #Save it to a file when it is the last index
+                    #i.e. save it to a file when we are done scraping each officer's citations
+                    scraped_data = self.get_data()
+                    if not scraped_data.empty:
+                        save_data(scraped_data, save = j == len(self.index)-1)
+                    else:
+                        print("No data")
+                    self._citation_loaded = True
+                except Exception as e:
+                    now = datetime.datetime.now()
+                    index = "0"*(5-len(str(i)))+str(j)
+                    key = f"P{i}-{index}"
+                    error_message = f"{now}: {str(e)};\nThere was an error sending the keys or scraping the data: {key}"
+                    with open("errors.txt", "a") as f:
+                        f.write(error_message + "\n\n")
+                    #self._flag = True
 
                 #Join the current thread
                 time_thread.join()
@@ -236,11 +252,9 @@ class Scraper():
                 if j % 10 == 0:
                     self.calculateTime()
 
-                #Reset the flag:
                 if self._flag:
                     #This property can only be set true by the measure_time thread
                     j -= 1
-                    self._flag = False
 
                 #Generally increase the jth index after each iteration
                 j += 1

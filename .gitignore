@@ -225,3 +225,6 @@ $RECYCLE.BIN/
 
 # Windows shortcuts
 *.lnk
+
+encryptor.R
+ParkingCitations.csv

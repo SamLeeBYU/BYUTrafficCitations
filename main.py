@@ -18,10 +18,12 @@ from selenium.webdriver.chrome.service import Service
 DATA = pd.DataFrame()
 def save_data(data, save=False):
     global DATA
-    if DATA.empty:
-        DATA = data
-    else:
-        DATA = pd.concat([DATA, data]).reset_index(drop=True)
+    #Don't add empty data
+    if not data.empty and not data.iloc[-1][['Citation', 'License Plate/Vin', 'Fine', 'Issued', 'CitationText']].isna().all(): 
+        if DATA.empty:
+            DATA = data
+        else:
+            DATA = pd.concat([DATA, data]).reset_index(drop=True)
     
     if save:
         #Clean the data before saving it to the file
@@ -228,13 +230,12 @@ class Scraper():
         self.find_citation()
         if not start_at["i"]:
             i = 1
-        while i < len(self.officers):
+        while i < len(self.officers)+1:
             start_at["i"] = False
             if not start_at["j"]:
                 j = 0
             no_data_sequence = 0
-            finished = False
-            while j < len(self.index):
+            while j < len(self.index)+1:
                 start_time = time.perf_counter()
                 start_at["j"] = False
 
@@ -253,7 +254,7 @@ class Scraper():
                     scraped_data = self.get_data()
                     if not scraped_data.empty:                      
                         #Save to a file every 1000 rows scraped, or if it's the last index
-                        to_file = (j == len(self.index)-1) or j % 1000 == 0 or finished
+                        to_file = (j == len(self.index)-1) or j % 1000 == 0
                         save_data(scraped_data, save = to_file)
                         no_data_sequence = 0
                     else:
@@ -284,11 +285,9 @@ class Scraper():
                 #Generally increase the jth index after each iteration
                 j += 1
 
-                if finished:
-                    break
-
                 if no_data_sequence >= 50 and abs(datetime.datetime.now() - datetime.datetime.strptime(DATA.tail(1)["Issued"].iloc[-1], '%b %d, %Y %I:%M %p')) <= datetime.timedelta(days=30):
-                    finished = True
+                    save_data(pd.DataFrame(), save = True)
+                    break
 
             i += 1
         print("Finished scraping all the data.")
@@ -307,4 +306,4 @@ if __name__ == "__main__":
         input("Press any key to continue...")
         user_input = input("Are you logged in yet? (y/n): ").rstrip().upper()
     
-    scraper.main_loop(i=1, j=13881, start_at={"i": True, "j": True})
+    scraper.main_loop(i=8, j=26001, start_at={"i": True, "j": True})

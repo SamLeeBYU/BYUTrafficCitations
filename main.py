@@ -260,7 +260,6 @@ class Scraper():
                     else:
                         print("No data")
                         no_data_sequence += 1
-                    self._citation_loaded = True
                 except Exception as e:
                     now = datetime.datetime.now()
                     index = "0"*(5-len(str(j)))+str(j)

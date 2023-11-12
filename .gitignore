@@ -228,3 +228,5 @@ $RECYCLE.BIN/
 
 encryptor.R
 ParkingCitations.csv
+air_quality_api_key.txt
+weather_api_key.txt

@@ -2,12 +2,9 @@ import numpy as np
 import pandas as pd
 import streamlit as st
 import plotly.express as px
-import seaborn as sns
-import matplotlib.pyplot as plt
 from sklearn.linear_model import LinearRegression
-from sympy import sympify, symbols, sqrt
 
-plt.style.use(['ggplot', 'seaborn-darkgrid'])
+from sympy import sympify, symbols, sqrt
 
 st.title("Air Quality in Provo, UT")
 

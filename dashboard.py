@@ -83,8 +83,9 @@ if separate:
     rolling_means = rolling_means.dropna()
     metric_plot = px.line(rolling_means, x="DATE", y=selected_metric, color="Day")
 else:
-    rolling_means = provo[provo["Day"].isin(selected_days)].copy()[selected_metric].rolling(window=smoothness).mean()
-    rolling_means["DATE"] = provo[provo["Day"].isin(selected_days)]["DATE"]
+    rolling_means = provo[provo["Day"].isin(selected_days)].copy()
+    rolling_means[selected_metric] = rolling_means[selected_metric].rolling(window=smoothness).mean()
+    #rolling_means["DATE"] = provo[provo["Day"].isin(selected_days)]["DATE"]
     metric_plot = px.line(rolling_means, x="DATE", y=selected_metric)
 ylabel = measurements[selected_metric]
 if len(ylabel) > 0:

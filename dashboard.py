@@ -77,15 +77,13 @@ separate = st.checkbox("Separate Days by Color")
 
 metric_plot = None
 if separate:
-    rolling_means = provo[provo["Day"].isin(selected_days)].copy().groupby("Day")[selected_metric].rolling(window=smoothness).mean().reset_index(drop=True)
-    rolling_means["DATE"] = provo[provo["Day"].isin(selected_days)]["DATE"]
-    rolling_means["Day"] = provo[provo["Day"].isin(selected_days)]["Day"]
+    rolling_means = provo[provo["Day"].isin(selected_days)].copy()
+    rolling_means[selected_metric] = rolling_means.groupby("Day")[selected_metric].rolling(window=smoothness).mean()
     rolling_means = rolling_means.dropna()
     metric_plot = px.line(rolling_means, x="DATE", y=selected_metric, color="Day")
 else:
     rolling_means = provo[provo["Day"].isin(selected_days)].copy()
     rolling_means[selected_metric] = rolling_means[selected_metric].rolling(window=smoothness).mean()
-    #rolling_means["DATE"] = provo[provo["Day"].isin(selected_days)]["DATE"]
     metric_plot = px.line(rolling_means, x="DATE", y=selected_metric)
 ylabel = measurements[selected_metric]
 if len(ylabel) > 0:

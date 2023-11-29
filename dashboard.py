@@ -178,3 +178,5 @@ term_metrics_fig.update_yaxes(title_text=f"{term_metric} {ylabel}")
 term_metrics_fig.update_xaxes(title_text=f"{metric} {xlabel}")
 
 st.plotly_chart(term_metrics_fig)
+
+st.write(f"R-squared: {term_metrics[term_metric].corr(term_metrics[metric])**2}")

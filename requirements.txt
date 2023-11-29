@@ -4,5 +4,5 @@ streamlit
 plotly
 seaborn
 matplotlib
-sklearn
+scikit-learn
 sympy

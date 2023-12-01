@@ -342,11 +342,11 @@ if not fileExists or recompile_models:
 
     provo_lasso = model.fit(provo_truncated[lasso_factors].iloc[np.max(lags):], provo_truncated["log_DailyNumFines"].iloc[np.max(lags):])
 
-    lasso_df = pd.DataFrame({
-        "DATE": provo["DATE"].iloc[np.max(lags):].tolist(),
-        "Model": ["Multilinear (w/ Weekly Lags)"]*provo.iloc[np.max(lags):].shape[0],
-        "PredictedDailyNumFines": np.exp(provo_lasso.predict(provo[lasso_factors].iloc[np.max(lags):]))
-    })
+    provo["FirstDifferencePrediction"] = None
+    provo["LassoPrediction"] = None
+    provo["RFPrediction"] = None
+
+    provo.loc[np.max(lags):, "LassoPrediction"] = np.exp(provo_lasso.predict(provo[lasso_factors].iloc[max(lags):]))-1
 
     difference = 1
 
@@ -362,72 +362,65 @@ if not fileExists or recompile_models:
         provo_truncated = pd.concat([provo_truncated, col], axis=1)
         provo = pd.concat([provo, col], axis=1)
 
-    lasso_df = lasso_df.merge(provo, how="right")
-
     difference_factors = [factor + "_change" for factor in difference_factors]
 
     provo_first_difference = model.fit(provo_truncated[difference_factors].iloc[difference:], provo_truncated["log_DailyNumFines_change"].iloc[difference:])
 
-    difference_df = pd.DataFrame({
-        "DATE": provo["DATE"].iloc[difference:].tolist(),
-        "Model": ["First Differences"]*provo.iloc[difference:].shape[0],
-        "PredictedDailyNumFines": np.exp(provo_first_difference.predict(provo[difference_factors].iloc[difference:]) + np.log(provo["DailyNumFines"].shift(difference) + 1).iloc[1:])
-    })
-
-    difference_df = difference_df.merge(provo, how="right")
+    provo.loc[difference:, "FirstDifferencePrediction"] = np.exp(provo_first_difference.predict(provo[difference_factors].iloc[difference:]) + np.log(provo["DailyNumFines"].shift(difference) + 1).iloc[1:])-1
 
     rf = RandomForestRegressor(n_estimators=100, random_state=1120)
     rf.fit(provo[model_factors].iloc[max(lags):], provo["log_DailyNumFines"].iloc[max(lags):])
 
-    rf_df = provo.merge(pd.DataFrame({
-        "DATE": provo["DATE"].iloc[max(lags):],
-        "Model": "Random Forest",
-        "PredictedDailyNumFines": np.exp(rf.predict(provo[model_factors].iloc[max(lags):]))
-    }), how="left")
+    provo.loc[np.max(lags):, "RFPrediction"] = np.exp(rf.predict(provo[model_factors].iloc[max(lags):]))-1
 
-    predictions = pd.concat([lasso_df, difference_df, rf_df])
+    predictions = provo[["DATE", "DailyNumFines", "LassoPrediction", "FirstDifferencePrediction", "RFPrediction"]]
     predictions.to_csv("predictions.csv", index=False)
+
+predictions["DATE"] = pd.to_datetime(predictions["DATE"])
 
 col1, col2 = st.columns(2)
 
 with col1:
-    selected_year = st.selectbox("Select a Year", ["All"]+(np.unique(provo["DATE"].dt.year)).tolist(), index=0)
+    selected_year = st.selectbox("Select a Year", ["All"]+(np.unique(predictions["DATE"].dt.year)).tolist(), index=0)
 
 with col2:
-    selected_term = st.selectbox("Select a Term", ["All"]+(np.unique(provo["Term"]).tolist()), index=0)
+    selected_term = st.selectbox("Select a Term", ["All"]+(np.unique(predictions["Term"]).tolist()), index=0)
 
 if selected_year == "All":
-    selected_year = np.unique(provo["DATE"].dt.year).tolist()
+    selected_year = np.unique(predictions["DATE"].dt.year).tolist()
 else:
     selected_year = [int(selected_year)]
 
 if selected_term == "All":
-    selected_term = np.unique(provo["Term"]).tolist()
+    selected_term = np.unique(predictions["Term"]).tolist()
 else:
     selected_term = [selected_term]
 
-selected_models = predictions["Model"].dropna().unique()
-
 model_smoothness = st.slider("Adjust Smoothness", min_value=1, max_value=180, value=30)
-rolling_means = predictions[predictions["Model"].isin(selected_models)].copy()
-rolling_means["PredictedDailyNumFines"] = rolling_means.groupby("Model")["PredictedDailyNumFines"].rolling(window=model_smoothness).mean().reset_index(drop=True)
-rolling_means["DailyNumFines"] = rolling_means.groupby("Model")["DailyNumFines"].rolling(window=model_smoothness).mean().reset_index(drop=True)
-rolling_means = rolling_means.dropna()
-rolling_means["DATE"] = pd.to_datetime(rolling_means["DATE"])
 
-provo["DailyNumFines"] = provo["DailyNumFines"].rolling(window=model_smoothness).mean().reset_index(drop=True)
-provo["DailyNumFines"] = provo["DailyNumFines"].dropna()
+predictions = predictions[(predictions["DATE"].dt.year.isin(selected_year)) & (predictions["Term"].isin(selected_term))].copy()
 
+for m in ["LassoPrediction", "FirstDifferencePrediction", "RFPrediction"]:
+    predictions[m] = np.maximum(np.round(predictions[m]), [0])
 
-if rolling_means.empty:
-    st.write("Actual # of Daily Fines Over Times")
-    predictive_plot = px.line(provo, x="DATE", y="DailyNumFines", color_discrete_sequence=["#ff97ff"])
-    predictive_plot.update_yaxes(title_text="Daily # of Fines")
-    st.plotly_chart(predictive_plot)
-else:
-    for m in selected_models:
-        data = rolling_means[(rolling_means["Model"] == m) & (rolling_means["DATE"].dt.year.isin(selected_year)) & (rolling_means["Term"].isin(selected_term))].copy()
-        model_plot = px.line(data, x="DATE", y="PredictedDailyNumFines", color="Model")
-        model_plot.add_scatter(x=data["DATE"], y=data["DailyNumFines"], mode='lines', name='Actual', line=dict(color='#ff97ff'))
-        model_plot.update_yaxes(title_text="Daily # of Fines")
-        st.plotly_chart(model_plot)
+rolling_means = predictions[["DailyNumFines", "LassoPrediction", "FirstDifferencePrediction", "RFPrediction"]].rolling(window=model_smoothness).mean().reset_index(drop=True)
+rolling_means["DATE"] = predictions["DATE"].reset_index(drop=True)
+rolling_means = rolling_means.iloc[(model_smoothness-1):].copy()
+
+st.write("\# of Daily Fines Over Time")
+predictive_plot = px.line(rolling_means, x="DATE", y="DailyNumFines", color_discrete_sequence=["#ff97ff"])
+predictive_plot.update_yaxes(title_text="Daily # of Fines")
+
+for m in ["LassoPrediction", "FirstDifferencePrediction", "RFPrediction"]:
+    label = ""
+    if m == "LassoPrediction":
+        label = "Multilinear Model (w/ Weekly Lags)"
+    elif m == "FirstDifferencePrediction":
+        label = "First Differences"
+    else:
+        label = "Random Forest"
+
+    predictive_plot.add_scatter(x=rolling_means["DATE"], y=rolling_means[m], mode='lines', name=label)
+
+st.plotly_chart(predictive_plot)
+

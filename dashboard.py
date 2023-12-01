@@ -4,7 +4,6 @@ import streamlit as st
 import plotly.express as px
 from sklearn.ensemble import RandomForestRegressor
 from sklearn.linear_model import LinearRegression
-import itertools
 import plotly.graph_objects as go
 
 from sympy import sympify, symbols, sqrt
@@ -286,7 +285,7 @@ if not fileExists or recompile_models:
         seasons = ["Spring", "Summer", "Fall"]
         lag_factors = ["DailyNumFines_Lag1", "DailyNumFines_Lag7", "DailyNumFines_Lag14", "DailyNumFines_Lag21", "DailyNumFines_Lag28"]
 
-        combinations = list(itertools.combinations(env_factors, 2))
+        combinations = [(x, y) for i, x in enumerate(env_factors) for y in env_factors[i + 1:]]
         for combination in combinations:
             factor = '_'.join(combination)
             interaction_factors.append(factor)

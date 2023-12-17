@@ -23,7 +23,7 @@ st.write('''
 This dashboard contains visuals for key elements to exploring the key elements and factors used to distinguishing the "signal from the noise." The goal is to control for all other effects that could otherwise affect the daily number of traffic citations given and isolate the effect that changes in air quality has on students driving to school, and hence, on the number of tickets given out.''')
 
 st.markdown("See this [blog post](https://samleebyu.github.io/2023/11/13/byu-traffic-citations/) for how I collected this data")
-st.markdown("See this [blog post](https://samleebyu.github.io/2023/11/13/byu-traffic-citations-eda/) for how I used this data to answer my research question")
+st.markdown("See this [blog post](https://samleebyu.github.io/2023/12/16/byu-traffic-citations-eda) for how I used this data to answer my research question")
 st.markdown("All relevant code and data is documented on this project's [repository](https://github.com/SamLeeBYU/BYUTrafficCitations)")
 
 st.markdown("## Dashboard Guide")

@@ -204,7 +204,7 @@ In the end I computed three main models to help me decipher the effect that envi
 3) A random forest model across all factors for optimal prediction.
          ''')
 
-st.markdown("A summary of the model findings are summarized [here](https://samleebyu.github.io/2023/12/16/byu-traffic-citations-eda/#3)")
+st.markdown("A summary of the model findings are found [here](https://samleebyu.github.io/2023/12/16/byu-traffic-citations-eda/#3)")
 
 provo = pd.read_csv("Provo.csv")
 provo["DATE"] = pd.to_datetime(provo["DATE"])

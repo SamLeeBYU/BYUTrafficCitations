@@ -14,69 +14,69 @@ If incentives for students' choices in transportation are indeed more inelastic 
 
 ## Essential Scripts
 ---
-###  analysis.qmd
+###  [analysis.qmd](analysis.qmd)
 This quarto file runs through the multilinear regression methods R. This performs multilinear regression with lags, applies lasso regression, and uses Random Forest modeling to model this data. The multilinear regression models are duplicated in *dashboard.py*.
 
-### AirQuality.ipynb
+### [AirQuality.ipynb](AirQuality.ipynb)
 This data set uses the [Weather Bit](https://www.weatherbit.io/) API to extract local and historical air quality data for Provo, UT. This API only goes back to 2022, so it was further merged with data from *ProvoAQ.csv* created by *PDF Extraction.ipynb*. This notebook then merges the two data sets (the modern air quality data obtained by the API and *ProvoAQ.csv*) into the final usable air quality data set, *AQ.csv*. Additionally this notebook takes *ParkingCitations.csv" and merges it with *WeatherCitations.csv" and "AQ.csv" and produces *citations.csv*
 
-### dashboard.py
-This python script creates the visualization dashboard for our final data set, *Provo.csv*, using the Streamlit platform
+### [dashboard.py](dashboard.py)
+This python script creates the visualization dashboard for our final data set, *Provo.csv*, using the Streamlit platform. The dashboard app is hosted live on the Streamlit platflorm: [https://byutrafficcitations.streamlit.app/](https://byutrafficcitations.streamlit.app/).
 
-### EDA.ipynb
+### [EDA.ipynb](EDA.ipynb)
 This notebook combines all the final data sets (*citations.csv*, *weather.csv*, *AQ.csv*) and merges them into a final data set (*Provo.csv*) to explore. This notebook summarizes key vizualizations.
 
-### main.py
+### [main.py](main.py)
 This is the main script used to scrape the data from BYU's server. I break down this script [here](https://samleebyu.github.io/2023/09/29/selenium-best-practices/). I use Selenium to iterate through all possible combinations of citation numbers and dynamically scrape the data. Outputs scraped data to *ParkingCitations.csv*, although for this repository, I've encrypted the citations for ethical purposes (see *ParkingCitationsEncypted.csv*). The citations in this file aren't real license plate numbers, although the state acronyms are preserved.
 
-### PDF Extraction.ipynb
+### [PDF Extraction.ipynb](main.py)
 This notebook uses the [ExtractTable](https://extracttable.com/) API to extract the all the historical air quality data (see *Provo Air Quality Data* directory) from the Provo area [3]. This saves the data set as *ProvoAQ.csv*
 
-### Weather.ipynb
+### [Weather.ipynb](main.py)
 This notebook uses the climate API [2] to obtain historical weather data for Provo. This saves the fetched data to *weather.json*. It also merges the citations with the weather data to create "WeatherCitations.csv"
 
 ## Non-essential Scripts
 ---
-### dashboard.ipynb
+### [dashboard.ipynb](dashboard.ipynb)
 This notebook explores potential visualizations for the Streamlit dashboard prepared in *dashboard.py*
 
-### DataAnalysis.ipynb
+### [DataAnalysis.ipynb](DataAnalysis.ipynb)
 A jupyter notebook used for basic exploratory data analysis on the *ParkingCitations* data set.
 
-### scraper.ipynb
+### [scraper.ipynb](scraper.ipynb)
 A jupyter notebook used for Selenium experimentation. Used as a prototype and a sandbox for *main.py*.
 
 
 ## Essential Data Sets
 ---
-### AQ.csv [3]
+### [AQ.csv](AQ.csv) [3]
 This data set consists of the daily maximums for key pollutants: $CO$, $NO_2$, $O_3$, $PM 10$, and $PM 2.5$ for every day going back to January, 1, 2014. This data set was obtained through running *PDF Extraction.ipynb* and *AirQuality.ipynb*--raw data for 2014-2022 is contained in the *Provo Air Quality Data* directory. Images were manually obtained through Utah's Environmental Agency [3], csv files were converted through python. *AirQuality.ipynb* uses the [Weather Bit](https://www.weatherbit.io/) API to extract air quality data for 2023. Ultimately, the year 2023 wasn't used for the analysis as it contained inconsistent unit measurements we used for matching 2014-2022 data with thresholds as defined by the EPA [4].
 
-### AQI-Criteria.csv [4]
+### [AQI-Criteria.csv](AQI-Criteria.csv) [4]
 This defines the thresholds for what qualifies as an unhealthy level for each pollutant as defined by the EPA. Data was obtained manually.
 
-### citations.csv
+### [citations.csv](citations.csv)
 This is the script produced by *AirQuality.ipynb*. This is the merged version of *ParkingCitationsEncrypted.csv*, *WeatherCitations.csv*, and *AQ.csv*. In other words, it a data set that has all the traffic citations of interest matched with corresponding air quality and weather data.
 
-### citations_cleaned.csv
+### [citations_cleaned.csv](citations_cleaned.csv)
 This data set is produced by *EDA.ipynb*. This notebook cleans the merged data (*citations.csv*): It adds summary statistic columns such as *Month, Day, Year, Week,WeeklyNumFines, DailyNumFines, TotalFineAmount, NumPaidFines, AvgPaidFine*. It also fills in missing pollutant data by taking each missing value and substituting it for the average value of that pollutant for the corresponding month across all years.
 
-### citations_cleaned_compact.csv
+### [citations_cleaned_compact.csv](citations_cleaned_compact.csv)
 *citations_cleaned.csv* is an hourly record of when each traffic citation was given. Since we only have daily maximums for pollutant and weather factors, I aggregated *citations_cleaned.csv* by the day and reported the sum of the number of traffic tickets and total fine given on that day to yield *citations_cleaned_compact.csv*. If daily maximum levels for environmental factors are, at least somewhat, a consistent estimator for the severity of the weather for that day--that is, if individuals more or less make decisions based on how they *anticipate* how *severe* the weather and their surroundings will be--then I expect that there will exist some signal in regard to the effect of daily maximum levels for environmental factors on changes in daily number of fines and total fines. 
 
-### enrollment.csv [5] [6]
+### [enrollment.csv](enrollment.csv) [5] [6]
 A data set that was manually curated from BYU enrollment [5] and BYU archive data [6]. This maps out BYU's full-time and part-time enrollment over time, allong with holiday and exam dates regarding the BYU semesters.
 
-### environment.csv
+### [environment.csv](environment.csv)
 This data set is an intermediate file of *EDA.ipynb*. This merges weather data and air quality into one data set for Provo.
 
-### predictions.csv
+### (predictions.csv)[predictions.csv]
 This file is produced by *dashboard.py*. This is the saved predicte values from each of the three models used to model the number of traffic citations over time.
 
-### ParkingCitationsEncrypted.csv [1]
+### [ParkingCitationsEncrypted.csv](ParkingCitationsEncrypted.csv) [1]
 The full data set of BYU parking citations as scraped from the data set. License plate numbers have been encrypted (the encryption script is not included on this repository) so the data set cannot be easily matched with other records across the internet, though state (Residence) records have been maintained. The data set contains citations from June, 2010 to Present (Oct, 2023).
 
-### Provo.csv
+### [Provo.csv](Provo.csv)
 The final cleaned data set, merged with all other necessary data sets (including *enrollment.csv*), and will be the data set used for regression analysis. This contains all the air quality and weather factors linked to each day corresponding to the number of traffic citations given on that day and the total fine given on that day.
 
 | Column            | Type         | Description                                     | First 5 Values                        |
@@ -121,25 +121,25 @@ The final cleaned data set, merged with all other necessary data sets (including
 | Holiday           | Numeric      | Holiday Indicator (0 or 1)                      | 0, 0, 0, 0, 0                       |
 | Exam              | Numeric      | Exam Indicator (0 or 1)                         | 0, 0, 0, 0, 0                       |
 
-### ProvoAQ.csv [3]
+### [ProvoAQ.csv](ProvoAQ.csv) [3]
 This data set contains all the merged air quality data from the directory, *Provo Air Quality Data*. This is a data set of historical air quality data from 2014-2022
 
-### WeatherCitations.csv
+### [WeatherCitations.csv](WeatherCitations.csv)
 This data set is created by *Weather.ipynb*. This is the result of the merged *ParkingCitationsEncrypted.csv* and the weather data obtained from the climate API, [Open-Meteo](https://open-meteo.com/en/docs/climate-api). 
 
-### weather.json
+### [weather.json](weather.json)
 This is the raw json response from the API call. This is used when formatting the weather data into pandas data frames to merge with rest of the data
 
 ## Non-Essential Data Sets
 ---
-### aq2023.csv
+### [aq2023.csv](aq2023.csv)
 This data set is a subset of *AQ.csv*. This contains air quality data for Provo, UT specifically 2023. This data was completely obtained through the [Weather Bit](https://www.weatherbit.io/) API.
 
-### FinesByMonth.csv
+### [FinesByMonth.csv](FinesByMonth.csv)
 A simple summary data set that shows the fines and unpaid proportion per month.
 
 ## Data Sources
-
+---
 [1] University traffic citations data come from BYU's citations server: [https://cars.byu.edu/citations](https://cars.byu.edu/citations). Data obtained through web scraping techniques which I explain [here](https://samleebyu.github.io/2023/09/29/selenium-best-practices/). Raw data can be viewed [here](https://github.com/SamLeeBYU/BYUTrafficCitations/blob/main/ParkingCitationsEncrypted.csv), though license plate/vin numbers have been encrypted so the data set cannot be easily merged with other data sets containing these license plate/vin numbers.
 
 [2] Local and historical weather data for Provo, UT were obtained through the climate API, [Open-Meteo](https://open-meteo.com/en/docs/climate-api).

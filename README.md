@@ -1,4 +1,4 @@
-# BYU Traffic Citations Research: How Parking Demand Changes with Response to Environmental Factors
+# BYU Traffic Citations Research: How Parking Demand Changes in Response to Environmental Factors
 
 ## Introduction
 
@@ -24,7 +24,7 @@ This data set uses the [Weather Bit](https://www.weatherbit.io/) API to extract 
 This python script creates the visualization dashboard for our final data set, *Provo.csv*, using the Streamlit platform. The dashboard app is hosted live on the Streamlit platflorm: [https://byutrafficcitations.streamlit.app/](https://byutrafficcitations.streamlit.app/).
 
 ### [EDA.ipynb](EDA.ipynb)
-This notebook combines all the final data sets (*citations.csv*, *weather.csv*, *AQ.csv*) and merges them into a final data set (*Provo.csv*) to explore. This notebook summarizes key vizualizations.
+This notebook combines all the final data sets (*citations.csv*, *weather.json*, *AQ.csv*) and merges them into a final data set (*Provo.csv*) to explore. This notebook summarizes key vizualizations.
 
 ### [main.py](main.py)
 This is the main script used to scrape the data from BYU's server. I break down this script [here](https://samleebyu.github.io/2023/09/29/selenium-best-practices/). I use Selenium to iterate through all possible combinations of citation numbers and dynamically scrape the data. Outputs scraped data to *ParkingCitations.csv*, although for this repository, I've encrypted the citations for ethical purposes (see *ParkingCitationsEncypted.csv*). The citations in this file aren't real license plate numbers, although the state acronyms are preserved.

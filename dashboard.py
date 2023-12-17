@@ -11,7 +11,7 @@ from sympy import sympify, symbols, sqrt
 st.title("How Parking Demand Changes in Response to Environmental Factors")
 
 st.write('''
-In this analysis I seek to answer whether changes in air quality change transportation incentives for students at my univeristy, Brigham Young University (BYU).
+In this analysis I seek to answer whether changes in air quality change transportation incentives for students at my university, Brigham Young University (BYU).
 ''')
 
 st.write('''
@@ -21,6 +21,10 @@ To measure how the incentives of university students to drive to school I analyz
 
 st.write('''
 This dashboard contains visuals for key elements to exploring the key elements and factors used to distinguishing the "signal from the noise." The goal is to control for all other effects that could otherwise affect the daily number of traffic citations given and isolate the effect that changes in air quality has on students driving to school, and hence, on the number of tickets given out.''')
+
+st.markdown("See this [blog post](https://samleebyu.github.io/2023/11/13/byu-traffic-citations/) for how I collected this data")
+st.markdown("See this [blog post](https://samleebyu.github.io/2023/11/13/byu-traffic-citations-eda/) for how I used this data to answer my research question")
+st.markdown("All relevant code and data is documented on this project's [repository](https://github.com/SamLeeBYU/BYUTrafficCitations)")
 
 st.markdown("## Dashboard Guide")
 st.markdown("- [Key Metrics Over Time](#key-metrics-over-time)")
@@ -99,6 +103,8 @@ st.markdown("## Lags of Key Metrics")
 st.write('''
 With this time series data set, analyze the effect of past values by calculating lags. Each lag is calculated as the values separated by the (previous) corresponding amount of days.
          ''')
+
+st.markdown("See how lag variables are used in this project on my blog [here](https://samleebyu.github.io/2023/12/16/byu-traffic-citations-eda/#a)")
 
 st.markdown("See this [article](https://www.journals.uchicago.edu/doi/full/10.1086/690946) for more information about lagged variables.")
 
@@ -196,9 +202,9 @@ In the end I computed three main models to help me decipher the effect that envi
 1) A multilinear regression model using lasso variable selection methods. Due to time series dependency, a series of lag variable and lag interaction terms are also included in the regression.
 2) A multilinear regression using first differences to account for the time series dependence. A lasso regression was also used here to select the appropriate variables. Additionally, due to non-normality of the residuals, robust linear regression was performed.
 3) A random forest model across all factors for optimal prediction.
-            
-A more in depth analysis of the model fitting and selection process can be found on my blog post.
          ''')
+
+st.markdown("A summary of the model findings are summarized [here](https://samleebyu.github.io/2023/12/16/byu-traffic-citations-eda/#3)")
 
 provo = pd.read_csv("Provo.csv")
 provo["DATE"] = pd.to_datetime(provo["DATE"])

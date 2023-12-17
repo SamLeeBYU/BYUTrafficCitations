@@ -1,0 +1,8 @@
+These commits refers to my https://github.com/SamLeeBYU/SamLeeBYU.github.io repository
+
+Data Collection Blog Post:
+SHA: a44552bf33f2137c82f478d81d2475bd5b6bfe65
+
+
+EDA Blog Post:
+SHA: 96b8ec30eb54227ff388c61db0e4274acb6e5b9d

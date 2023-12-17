@@ -8,7 +8,7 @@ import plotly.graph_objects as go
 
 from sympy import sympify, symbols, sqrt
 
-st.title("Air Quality in Provo, UT")
+st.title("How Parking Demand Changes in Response to Environmental Factors")
 
 st.write('''
 In this analysis I seek to answer whether changes in air quality change transportation incentives for students at my univeristy, Brigham Young University (BYU).

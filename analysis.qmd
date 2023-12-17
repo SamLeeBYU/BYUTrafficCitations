@@ -16,7 +16,7 @@ library(robustbase)
 ```
 
 ```{r message=F, echo=F}
-provo = read_csv("provo.csv")
+provo = read_csv("Provo.csv")
 set.seed(123)
 ```
 
@@ -63,8 +63,7 @@ model.factors = c("MaxTemp", "MinTemp", "MeanTemp", "RainPrecip", "SnowPrecip",
 ```
 
 ```{r}
-log.factors = c("RainPrecip", "SnowPrecip", "Wind", "NO2",
-                "PM10", "PM25", "AQI", "FullTime")
+log.factors = c("RainPrecip", "SnowPrecip", "Wind", "FullTime")
 for(factor in log.factors){
   provo[factor] = log(provo[factor]+1)
 }
@@ -92,7 +91,8 @@ add_interaction_factors = function(){
                     
   days = c("Mon", "Tues", "Wed", "Thurs", "Fri", "Sun")
   
-  months = c("February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December")
+  months = c("February", "March", "April", "May", "June", "July", "August", 
+             "September", "October", "November", "December")
   seasons = c("Spring", "Summer", "Fall")
   lag_factors = c("DailyNumFines_Lag1",
                   "DailyNumFines_Lag7",
@@ -146,16 +146,18 @@ provo[(max(lags)+1):nrow(provo),] -> provo_reduced
 provo_reduced = truncate_provo(provo_reduced)
 
 #Basic Linear Model (Robust)
-provo.lm = lm(log_DailyNumFines ~ ., provo_reduced[c(model.factors, "log_DailyNumFines")])
+provo.lm = lm(log_DailyNumFines ~ ., 
+              provo_reduced[c(model.factors, "log_DailyNumFines")])
 summary(provo.lm)
 
-provo.base = lm(log_DailyNumFines ~ 1, data=provo_reduced[c(model.factors, "log_DailyNumFines")])
+provo.base = lm(log_DailyNumFines ~ 1, 
+                data=provo_reduced[c(model.factors, "log_DailyNumFines")])
 
-provo.step = step(provo.base,
-                  direction = "both",
-                  k = log(nrow(provo_reduced)),
-                  scope = list(lower=provo.base, upper=provo.lm))
-summary(provo.step)
+# provo.step = step(provo.base,
+#                   direction = "both",
+#                   k = log(nrow(provo_reduced)),
+#                   scope = list(lower=provo.base, upper=provo.lm))
+# summary(provo.step)
 
 provo.x = as.matrix(provo_reduced[model.factors])
 provo.y = as.matrix(provo_reduced["log_DailyNumFines"])
@@ -167,15 +169,16 @@ lasso_cv <- cv.glmnet(x = provo.x,
 
 d = coef(lasso_cv, s = "lambda.1se")[1:length(model.factors)]
 
-provo.lasso = lm(log_DailyNumFines ~ ., provo_reduced[c(model.factors[which(d != 0)-1],
-                                            "log_DailyNumFines")], fast.s.large.n = Inf)
+provo.lasso = lm(log_DailyNumFines ~ ., 
+                 provo_reduced[c(model.factors[which(d != 0)-1],
+                 "log_DailyNumFines")], fast.s.large.n = Inf)
 summary(provo.lasso)
 ```
 
 
 ```{r}
 #First Differences
-
+seasons = c("Spring", "Summer", "Fall")
 difference = 1
 
 model.factors = setdiff(model.factors, c(str_c("DailyNumFines_Lag", lags), 
@@ -183,30 +186,47 @@ model.factors = setdiff(model.factors, c(str_c("DailyNumFines_Lag", lags),
                                          "t", env.lag.factors, "SnowPrecip_Summer"))
 
 for(factor in c("log_DailyNumFines", model.factors)){
-  provo[str_c(factor, "_t-",difference)] = lag(provo[factor], n=difference)
-  provo[str_c(factor, "_change")] = provo[factor] - 
+  if(!(factor %in% seasons)){
+    provo[str_c(factor, "_t-",difference)] = lag(provo[factor], n=difference)
+    provo[str_c(factor, "_change")] = provo[factor] - 
     provo[str_c(factor, "_t-",difference)]
+  }
 }
 
-provo.change = provo[(difference+1):nrow(provo), c("DATE", "DailyNumFines",
-                     str_c(c(model.factors, "log_DailyNumFines"), "_change"))]
+model.factors.new = str_c(model.factors, "_change")
+for(season in seasons){
+  for(factor in str_c(setdiff(model.factors, c(month.name, seasons)), "_change")){
+    if(!any(str_detect(factor, month.name)) && !any(str_detect(factor, seasons))){
+      #interaction terms for seasonal dummies
+      provo[str_c(factor, "X", season)] = provo[factor]*provo[season]
+      model.factors.new = c(model.factors.new, str_c(factor, "X", season))
+    }
+  }
+}
+
+provo.change = provo[(difference+1):nrow(provo),
+                     c("DATE", "DailyNumFines",
+                    colnames(provo)[str_detect(colnames(provo), "change")])]
 
 provo.change = truncate_provo(provo.change)
 
 #Full lm
-provo.change.full = lm(log_DailyNumFines_change ~ 0 + ., provo.change)
-provo.change.base = lm(log_DailyNumFines_change ~ 0, provo.change)
+#provo.change.full = lm(log_DailyNumFines_change ~ 0 + ., provo.change)
+#provo.change.base = lm(log_DailyNumFines_change ~ 0, provo.change)
 
-provo.change.step = step(provo.change.base,
-                         direction = "both",
-                         k = log(nrow(provo.change)),
-                         scope=list(lower=provo.change.base, 
-                                    upper= provo.change.full))
+# provo.change.step = step(provo.change.base,
+#                          direction = "both",
+#                          k = log(nrow(provo.change)),
+#                          scope=list(lower=provo.change.base, 
+#                                     upper= provo.change.full))
 
-summary(provo.change.step)
+# summary(provo.change.step)
 
-provo.x = as.matrix(provo.change[str_c(model.factors,
-                                       "_change")])
+model.factors.change = setdiff(colnames(provo)[str_detect(colnames(provo), 
+                                                          "change")], 
+                               "log_DailyNumFines_change")
+
+provo.x = as.matrix(provo.change[model.factors.change])
 provo.y = as.matrix(provo.change["log_DailyNumFines_change"])
 
 lasso_cv <- cv.glmnet(x = provo.x,
@@ -214,12 +234,11 @@ lasso_cv <- cv.glmnet(x = provo.x,
                         type.measure = "mse", 
                         alpha = 1)
 
-d = coef(lasso_cv, s = "lambda.1se")[1:length(model.factors)]
+d = coef(lasso_cv, s = "lambda.1se")[1:length(model.factors.change)]
 
 provo.change.lasso = lmrob(log_DailyNumFines_change ~ 0 + ., 
-                        provo.change[c(str_c(model.factors, "_change")
-                                       [which(d != 0)-1],
-                                            "log_DailyNumFines_change")], 
+                        provo.change[c(model.factors.change[which(d != 0)-1], 
+                                       "log_DailyNumFines_change")],
                         fast.s.large.n = Inf)
 summary(provo.change.lasso)
 

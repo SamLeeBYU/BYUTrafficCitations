@@ -226,7 +226,7 @@ summary(provo.change.lasso)
 provo.change$prediction = predict(provo.change.lasso, provo.change)
 provo.change$DailyNumFinesPrediction = exp(provo.change$prediction+log(
                                              lag(provo.change$DailyNumFines, 
-                                              n=difference)))
+                                              n=difference)+1))
 ```
 
 ```{r}

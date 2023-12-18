@@ -2,7 +2,7 @@
 
 ## Introduction
 
-Both private and public universities across the United Sates typically have university-specific parking service to enforce university parking regulations due to limited parking space supply. For the purposes of this analysis, we will analyze traffic citation data specific to my univerity, Brigham Young Univeristy.
+Both private and public universities across the United Sates typically have university-specific parking service to enforce university parking regulations due to limited parking space supply. For the purposes of this analysis, we will analyze traffic citation data specific to my univerity, Brigham Young University.
 
 The purpose behind this analysis will be to see if we can trace out any signal behind the relationship of number of traffic citations given on a particular day and effects in weather and air quality. We hypothesize that when adjusted for confounding effects such as changes in enrollment, seasonality, type of day (whether the day is a holiday), day of week, and trends in time, we can isolate the effect of all influential factors that affect trends in traffic citations given at BYU.
 
@@ -11,6 +11,8 @@ We hypothesize that changes in weather patterns change the incentives of student
 If this theory holds then through regression analysis, we hope to show that increase in negative weather effects will significantly decrease the amount of traffic citations distributed on a particular day. 
 
 If incentives for students' choices in transportation are indeed more inelastic than the incentives for parking police at BYU with respect to changes in weather and air quality, then this provides convincing evidence that as trends in weather and air quality become more severe, weather factors become a greater indicator of changes in parking demand than parking citations.
+
+See this [blog post](https://samleebyu.github.io/2023/12/16/byu-traffic-citations-eda) for how I used the data to answer this question.
 
 ## Essential Scripts
 ---
@@ -24,10 +26,10 @@ This data set uses the [Weather Bit](https://www.weatherbit.io/) API to extract 
 This python script creates the visualization dashboard for our final data set, *Provo.csv*, using the Streamlit platform. The dashboard app is hosted live on the Streamlit platflorm: [https://byutrafficcitations.streamlit.app/](https://byutrafficcitations.streamlit.app/).
 
 ### [EDA.ipynb](EDA.ipynb)
-This notebook combines all the final data sets (*citations.csv*, *weather.json*, *AQ.csv*) and merges them into a final data set (*Provo.csv*) to explore. This notebook summarizes key vizualizations.
+This notebook combines all the final data sets (*citations.csv*, *weather.json*, *AQ.csv*) and merges them into a final data set (*Provo.csv*) to explore. This notebook summarizes key visualizations.
 
 ### [main.py](main.py)
-This is the main script used to scrape the data from BYU's server. I break down this script [here](https://samleebyu.github.io/2023/09/29/selenium-best-practices/). I use Selenium to iterate through all possible combinations of citation numbers and dynamically scrape the data. Outputs scraped data to *ParkingCitations.csv*, although for this repository, I've encrypted the citations for ethical purposes (see *ParkingCitationsEncypted.csv*). The citations in this file aren't real license plate numbers, although the state acronyms are preserved.
+This is the main script used to scrape the data from BYU's server. I break down this script [here](https://samleebyu.github.io/2023/09/29/selenium-best-practices/). I use Selenium to iterate through all possible combinations of citation numbers and dynamically scrape the data. Outputs scraped data to *ParkingCitations.csv*, although for this repository, I've encrypted the citations for ethical purposes (see *ParkingCitationsEncrypted.csv*). The citations in this file aren't real license plate numbers, although the state acronyms are preserved.
 
 ### [PDF Extraction.ipynb](main.py)
 This notebook uses the [ExtractTable](https://extracttable.com/) API to extract the all the historical air quality data (see *Provo Air Quality Data* directory) from the Provo area [3]. This saves the data set as *ProvoAQ.csv*
@@ -71,7 +73,7 @@ A data set that was manually curated from BYU enrollment [5] and BYU archive dat
 This data set is an intermediate file of *EDA.ipynb*. This merges weather data and air quality into one data set for Provo.
 
 ### (predictions.csv)[predictions.csv]
-This file is produced by *dashboard.py*. This is the saved predicte values from each of the three models used to model the number of traffic citations over time.
+This file is produced by *dashboard.py*. This is the saved predicted values from each of the three models used to model the number of traffic citations over time.
 
 ### [ParkingCitationsEncrypted.csv](ParkingCitationsEncrypted.csv) [1]
 The full data set of BYU parking citations as scraped from the data set. License plate numbers have been encrypted (the encryption script is not included on this repository) so the data set cannot be easily matched with other records across the internet, though state (Residence) records have been maintained. The data set contains citations from June, 2010 to Present (Oct, 2023).
@@ -85,9 +87,9 @@ The final cleaned data set, merged with all other necessary data sets (including
 | Month             | Numeric      | Month (1-12)                                          | 1, 1, 1, 1, 1                         |
 | Day               | Character    | Day (Monday-Sunday)                                             | Monday, Tuesday, Wednesday, Thursday, Friday |
 | NA_Correction     | Logical      | Whether the a pollutant value was corrected for NA                                   | FALSE, FALSE, FALSE, FALSE, FALSE     |
-| MaxTemp           | Numeric      | Celcius                            | -3.3, 1.1, 0.9, 0.1, 3.1              |
-| MinTemp           | Numeric      | Celcius                             | -17.6, -11.6, -2.6, -10.3, -4.1       |
-| MeanTemp          | Numeric      | Celcius                               | -10.5, -4.7, -0.5, -4.4, -0.5         |
+| MaxTemp           | Numeric      | Celsius                            | -3.3, 1.1, 0.9, 0.1, 3.1              |
+| MinTemp           | Numeric      | Celsius                             | -17.6, -11.6, -2.6, -10.3, -4.1       |
+| MeanTemp          | Numeric      | Celsius                               | -10.5, -4.7, -0.5, -4.4, -0.5         |
 | RainPrecip        | Numeric      | mm                              | 0, 0, 0, 0, 0                         |
 | SnowPrecip        | Numeric      | cm                             | 0, 0.21, 2.66, 3.92, 0.91            |
 | Wind              | Numeric      | km/h                                           | 6.8, 5.9, 7.9, 8.9, 7                |
@@ -139,12 +141,13 @@ This data set is a subset of *AQ.csv*. This contains air quality data for Provo,
 A simple summary data set that shows the fines and unpaid proportion per month.
 
 ## Data Sources
+For an in-depth walk-through of how I collected the data for this project please see this [blog post](https://samleebyu.github.io/2023/11/13/byu-traffic-citations/)
 ---
 [1] University traffic citations data come from BYU's citations server: [https://cars.byu.edu/citations](https://cars.byu.edu/citations). Data obtained through web scraping techniques which I explain [here](https://samleebyu.github.io/2023/09/29/selenium-best-practices/). Raw data can be viewed [here](https://github.com/SamLeeBYU/BYUTrafficCitations/blob/main/ParkingCitationsEncrypted.csv), though license plate/vin numbers have been encrypted so the data set cannot be easily merged with other data sets containing these license plate/vin numbers.
 
 [2] Local and historical weather data for Provo, UT were obtained through the climate API, [Open-Meteo](https://open-meteo.com/en/docs/climate-api).
 
-[3] Local historical air quality data containing measurements for $CO$, $NO_2$, $O_3$, $PM 10$, and $PM 2.5$ were obtained through parsing through data on the Utah Department of Environmental Quality's [website](https://air.utah.gov/dataarchive/archall.htm). Missing data were corrected by subtituting the missing values for the average of the given metric for the corresponding month aggregated overall all the data (years 2014-2022, April-August of 2020 excluded).
+[3] Local historical air quality data containing measurements for $CO$, $NO_2$, $O_3$, $PM 10$, and $PM 2.5$ were obtained through parsing through data on the Utah Department of Environmental Quality's [website](https://air.utah.gov/dataarchive/archall.htm). Missing data were corrected by substituting the missing values for the average of the given metric for the corresponding month aggregated overall all the data (years 2014-2022, April-August of 2020 excluded).
 
 [4] Air quality pollutant specific sub-category metrics are determined by the U.S. Environmental Protection Agency Office of Air Quality Planning and Standards Air Quality Assessment Division. See [here](https://airnowtomed.app.cloud.gov/sites/default/files/2020-05/aqi-technical-assistance-document-sept2018.pdf) (pages 4 and 5). Appropriate AQI was also calculated using EPA's documentation found here.
 

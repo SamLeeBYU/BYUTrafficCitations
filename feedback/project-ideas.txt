@@ -1,0 +1,15 @@
+For my project I solicited feedback from Daphne Le Seur and Aleena Eskeets. Since I was dealing with a very noisy data set, I asked what other variables 
+I could include in my data set to help isolate the effect of environmental factors. Daphne said, "it would also be interesting to note how many parking enforcement 
+employees there were during each of these months. I'm not sure if there is public data on that, but it looks like during the summer months is where the citations 
+goes down. I think this can be for sure attributed to fewer students on campus during these months but could potentially also be affected by a smaller number of 
+officers patrolling during the summer." Daphne had a point with this, and she's right. However, given that this data wasn't publicly available and given that it was
+difficult to obtain that data from the university (I did reach out), I assumed that this covariate could be explained by changes in season.
+
+I recognized that my research question may be hard to answer. Daphne said she'd be curious to see how citations are correlated with precipitation and focus in isolating a causal effect of
+precipitation on the daily number of traffic citations.
+
+Leena said similar things, although she said she'd interested in how revenue (the amount of daily/weekly) obtained from traffic citations flowed over time.
+Could we prove that university parking police engage in biweekly or monthly quotas? I decided to investigate this question in my exploratory data analysis.
+
+For my main project I decided to see if any weather or environmental factor had a significant effect on the number of daily number of traffic citations all other things
+accounted for. This included for controlling for interaction effects between the seasons and months and the different environmental terms.

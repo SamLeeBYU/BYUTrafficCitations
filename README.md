@@ -141,6 +141,7 @@ This data set is a subset of *AQ.csv*. This contains air quality data for Provo,
 A simple summary data set that shows the fines and unpaid proportion per month.
 
 ## Data Sources
+
 For an in-depth walk-through of how I collected the data for this project please see this [blog post](https://samleebyu.github.io/2023/11/13/byu-traffic-citations/)
 ---
 [1] University traffic citations data come from BYU's citations server: [https://cars.byu.edu/citations](https://cars.byu.edu/citations). Data obtained through web scraping techniques which I explain [here](https://samleebyu.github.io/2023/09/29/selenium-best-practices/). Raw data can be viewed [here](https://github.com/SamLeeBYU/BYUTrafficCitations/blob/main/ParkingCitationsEncrypted.csv), though license plate/vin numbers have been encrypted so the data set cannot be easily merged with other data sets containing these license plate/vin numbers.

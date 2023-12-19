@@ -1,3 +1,17 @@
 This commit refers to this repository
 SHA: 91f2b232499d0ee1e5fe397421a72884a2f359ed
 
+Feedback:
+
+Dr. Tass (verbal): Dr. Tass recommended I have a selection for different days to separate out the data in the first graph (metrics over time)
+
+William Martindale: I like the dashboard, though when I used it I did notice that there's a period from 2017 to 2019 where there are almost no fines in your data. Is that how it is in the original data set? If so, you should probably talk about it in your data gathering post.
+
+Isaac Aguilar: The dashboard is great and clear too. I would just change the input to transform your metrics from entering text to a dropdown box. It might be boring or too restrictive but it is also more user friendly.
+
+Ty Hawkes: Hey Sam! Nice dashboard. I love that you've chosen to include some visualizations that go beyond a basic bar chart, and incorporate some hard core statistics. This dashboard may not be suitable for someone who does not understand statistics, but for everyone else, they are gonna appreciate how much statistical care you are taking in trying to answer your question. Though I do understand what lag and smoothness are for a time series, many students with even a good understanding of statistics may not. Consider elaborating or leaving a description on how to interpret your lag plot. I would also consider changing the title of your application to help viewers understand that you are exploring the relationship between air quality AND transportation incentives for BYU students.
+
+Daphne Le Seur: Sam I think your dashboard is great, especially how you can choose each different metric and adjust the little slider to see what you want to see
+The only thing I'm a little confused on is what Smoothness means and also Lags of key metrics. So i adjusted the little sliders but I wasn't super sure what I was looking at! So maybe theres a way you can explain that?
+
+Feedback: I created links that referenced points in my blog for people who are interested in more in depth analysis. I also created options to split the data up by days like Dr. Tass suggested. I made significant improvements from the initial post such as adding a modeling feature. I also added more explanations for what seemed to be tripping students up and added references. I changed the title like Ty suggested.

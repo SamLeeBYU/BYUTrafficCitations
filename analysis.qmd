@@ -286,3 +286,40 @@ provo_reduced %>% filter(year(DATE) == 2022) %>%
   geom_line(data=provo.change %>% filter(year(DATE) == 2022), aes(x=DATE, y=DailyNumFinesPrediction), color="#6F9FFF")+
   theme_minimal()
 ```
+
+```{r}
+citations = read_csv("ParkingCitationsEncrypted.csv")
+
+citations %>% mutate(
+  Year = year(IssuedDate),
+  Month = month(IssuedDate)
+) -> citations
+
+citations %>% group_by(Year, Month) %>%
+  summarize(
+    TotalTickets = n()
+  ) %>% arrange(Year, Month)
+```
+
+```{r}
+library(zoo)
+
+m = 7
+
+threshold = 0
+provo %>% filter(DailyNumFines > threshold) -> provo
+
+x = rollapply(1/provo$AQI^2, width = m, FUN = mean, align = "right", fill = NA)
+y = rollapply(provo$DailyNumFines, width = m, FUN = mean, align = "right", fill = NA)
+
+cov(x,y,use="complete")/var(x, na.rm=T)
+
+lm(y ~ x) |> summary()
+
+invTranPlot(x, y)
+
+ggplot(mapping=aes(x,y))+
+  geom_point()+
+  geom_smooth(method="lm", se=F)+
+  theme_minimal()
+```

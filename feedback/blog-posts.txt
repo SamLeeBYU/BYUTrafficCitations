@@ -3,6 +3,22 @@ These commits refers to my https://github.com/SamLeeBYU/SamLeeBYU.github.io repo
 Data Collection Blog Post:
 SHA: a44552bf33f2137c82f478d81d2475bd5b6bfe65
 
+Feedback:
+
+William Martindale: The Data Collections part is pretty good! It's well-organized and aesthetically pleasing. I do wonder about the ethical implications of the university having that information available for web scraping, though. It looks like the footnotes aren't working though. Is there any way you can make them link to each other?
+
+Isaac Aguilar: Hi Sam, you did an amazing job at everything! Show this to a future employer and they will give you the job. This is very well presented. It is nice that you used more than 2 sources and explained where they all are coming from. Everything looks find with the 1st blog.
+
+Revisions: I took William's suggestions and decided to link the footnotes in the main text to the data sources. I also decided to make a mention about the missing data from 2017-2019.
 
 EDA Blog Post:
 SHA: 96b8ec30eb54227ff388c61db0e4274acb6e5b9d
+
+Feedback:
+
+
+William Martindale: I like the graphs in the EDA as well. I do feel like the trends in number of tickets versus local weather data graph isn't really designed well enough to tell us anything though.
+
+Isaac Aguilar: Your second blog is also well presented and you covered everything asked in class. I would just proof read it, or ask chatgpt to do it for you. I found you used "the" twice in the paragraph after your lag plot. You took your EDA to the next level with the models you used. I liked that your conclusion was simple and clear.
+
+Revisions: I made grammatical changes and made sentence revisions.
